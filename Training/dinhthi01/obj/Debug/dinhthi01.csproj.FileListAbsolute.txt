@@ -4,3 +4,9 @@ D:\DinhThi\API\dinhthi01\dinhthi01\obj\Debug\dinhthi01.csprojAssemblyReference.c
 D:\DinhThi\API\dinhthi01\dinhthi01\obj\Debug\dinhthi01.csproj.CoreCompileInputs.cache
 D:\DinhThi\API\dinhthi01\dinhthi01\obj\Debug\dinhthi01.dll
 D:\DinhThi\API\dinhthi01\dinhthi01\obj\Debug\dinhthi01.pdb
+D:\DinhThi\GitHub\Training\Training\dinhthi01\bin\Debug\dinhthi01.dll
+D:\DinhThi\GitHub\Training\Training\dinhthi01\bin\Debug\dinhthi01.pdb
+D:\DinhThi\GitHub\Training\Training\dinhthi01\obj\Debug\dinhthi01.csprojAssemblyReference.cache
+D:\DinhThi\GitHub\Training\Training\dinhthi01\obj\Debug\dinhthi01.csproj.CoreCompileInputs.cache
+D:\DinhThi\GitHub\Training\Training\dinhthi01\obj\Debug\dinhthi01.dll
+D:\DinhThi\GitHub\Training\Training\dinhthi01\obj\Debug\dinhthi01.pdb

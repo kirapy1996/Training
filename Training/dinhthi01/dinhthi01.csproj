@@ -50,7 +50,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
+<<<<<<< HEAD
     <Compile Include="Geometry\GeomUtil.cs" />
+=======
+    <Compile Include="Cuong.cs" />
+>>>>>>> 45087a26a1d26d8501af3b358f7e3b39d20a3a4c
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
