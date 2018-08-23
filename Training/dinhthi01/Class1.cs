@@ -3,8 +3,6 @@ using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
-
-// text
 using System.IO;
 
 
@@ -12,68 +10,98 @@ namespace dinhthi01
 {
     [Transaction(TransactionMode.Manual)]
     public class Command : IExternalCommand
-
-
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
-        {   
+        {
             UIApplication uiapp = commandData.Application;
             UIDocument uidoc = uiapp.ActiveUIDocument;
 
             //Document doc = uidoc.Document;
-
+            float roundto = 5;
+            const double precision = 0.00001;
             Selection sel = uidoc.Selection;
-            //Reference dimref = sel.PickObject(ObjectType.Element, new DimSelectionFilter());
-            //Dimension dim = doc.GetElement(dimref) as Dimension;
-            //double? giatri = dim.Value;
-            Reference gridref = sel.PickObject(ObjectType.Element, new GridSelectionFilter());
-            Grid grid = uidoc.Document.GetElement(gridref) as Grid;
+            Reference gridrefX = sel.PickObject(ObjectType.Element, new GridSelectionFilter());
+            Grid gridX = uidoc.Document.GetElement(gridrefX) as Grid;
+            Reference gridrefY = sel.PickObject(ObjectType.Element, new GridSelectionFilter());
+            Grid gridY = uidoc.Document.GetElement(gridrefY) as Grid;
+            
+            Reference elemref = sel.PickObject(ObjectType.Element, new BeamSelectionFilter());
+            FamilyInstance elem = uidoc.Document.GetElement(elemref) as FamilyInstance;
+            LocationCurve elemcurve = elem.Location as LocationCurve;
+            Line elemline = elemcurve.Curve as Line;
+            Line gridlineX = gridX.Curve as Line;
+            Line gridlineY = gridY.Curve as Line;
 
-            //XYZ griddirection = grid.Curve
-            //    .GetEndPoint(1)
-            //    .Subtract(grid.Curve.GetEndPoint(0))
-            //    .Normalize();
+            //Kiểm tra và đặt tên Grid, GridX song song với Location.Curve - Line, Grid Y vuông góc,...
 
-            Reference beamref = sel.PickObject(ObjectType.Element, new BeamSelectionFilter());
-            FamilyInstance beam = uidoc.Document.GetElement(beamref) as FamilyInstance;
-            //XYZ beamdirection = beam.HandOrientation.Normalize();
-            LocationCurve beamcurve = beam.Location as LocationCurve;
-            Line beamline = beamcurve.Curve as Line;
-            Line gridline = grid.Curve as Line;
-
-                        
-            double distance = GetDistance.Distance(beam, grid);
-            double movedis = Math.Abs(distance - Lamtron.Round(distance));
-
-            if (movedis <= 0.01)
-            {
-                TaskDialog.Show("Result", "Ko can chinh");
-                return Result.Succeeded;
+            if (Geometry.GeomUtil.IsSameOrOppositeDirection(elemline.Direction, gridlineY.Direction))
+            { 
+                gridX = uidoc.Document.GetElement(gridrefY) as Grid;
+                gridY = uidoc.Document.GetElement(gridrefX) as Grid;
+                gridlineX = gridX.Curve as Line;
+                gridlineY = gridY.Curve as Line;
             }
-               
-
-            XYZ movevector = new XYZ(-beamline.Direction.Y, beamline.Direction.X, 0).Normalize();
-            movevector = movevector * movedis / 12 / 25.4;
-            //TaskDialog.Show("movedis",movedis.ToString());
-
-            using (Transaction transaction = new Transaction(uidoc.Document))
+            double movedis = GetMoveDistance(elemline, gridX,roundto);
+            // Move dầm phương song song
+            if (movedis > precision)
             {
-                transaction.Start("Beam Moving");
-                
+                XYZ movevector1 = new XYZ(-elemline.Direction.Y, elemline.Direction.X, 0).Normalize() * Geometry.GeomUtil.milimeter2Feet(movedis);
 
-                beam.Location.Move(movevector);                
-                if (Math.Abs(GetDistance.Distance(beam, grid)%5) >0.01 && Math.Abs(GetDistance.Distance(beam, grid) % 5)<4.99)
+                using (Transaction transactionX = new Transaction(uidoc.Document))
                 {
-                    //TaskDialog.Show("Distance", (Math.Abs(GetDistance.Distance(beam, grid)-distance)-movedis).ToString());
-                    beam.Location.Move(-2 * movevector);
+                    transactionX.Start("Beam Moving X");
+                    elem.Location.Move(movevector1);
+                    if (Math.Abs(GetMoveDistance(elemline, gridX, roundto) % roundto) > precision && Math.Abs(GetMoveDistance(elemline, gridX, roundto) % roundto) < roundto - precision)
+                    {
+                        elem.Location.Move(-2 * movevector1);
+                    }
+                    transactionX.Commit();
                 }
-                transaction.Commit();
+            }
+            movedis = GetMoveDistance(elemline.GetEndPoint(0), gridY, roundto);
+            TaskDialog.Show("ss", movedis.ToString());
+            // Move dầm phương vuông góc
+            if (movedis >= precision)
+            {
+                XYZ movevector2 = new XYZ(elemline.Direction.X, elemline.Direction.Y, 0).Normalize() * Geometry.GeomUtil.milimeter2Feet(movedis);
+                using (Transaction transactionY = new Transaction(uidoc.Document))
+                {
+                    transactionY.Start("Beam moving Y");
+                    elem.Location.Move(movevector2);
+                    if (Math.Abs(GetMoveDistance(elemline.GetEndPoint(0), gridY, roundto) % roundto) > precision && Math.Abs(GetMoveDistance(elemline.GetEndPoint(0), gridY, roundto) % roundto) < (roundto - precision))
+                    {
+                        elem.Location.Move(-2 * movevector2);
+                    }
+                    transactionY.Commit();
+                }
             }
             return Result.Succeeded;
         }
+        public static double Round(double dimvalue, double roundto)
+        {
+            // roundto 1,5,10
+            if ((dimvalue % roundto) >= (roundto / 2)) dimvalue = dimvalue - dimvalue % roundto + roundto;
+            else  dimvalue = dimvalue - dimvalue % roundto;
+            return dimvalue;
+
+        }
+        public static double GetMoveDistance(Line line, Grid grid, float roundto)
+        {   
+            Line gridline = grid.Curve as Line;
+            XYZ point = new XYZ(Geometry.GeomUtil.GetMiddlePoint(line.GetEndPoint(0), line.GetEndPoint(1)).X, Geometry.GeomUtil.GetMiddlePoint(line.GetEndPoint(0), line.GetEndPoint(1)).Y, 0);
+            double distance = Geometry.GeomUtil.feet2Milimeter(gridline.Distance(point));
+            double movedis = Math.Abs(distance - Round(distance, roundto));
+            return movedis;
+        }
+        public static double GetMoveDistance(XYZ point, Grid grid, float roundto)
+        {
+            Line gridline = grid.Curve as Line;
+            XYZ zeropoint = new XYZ(point.X, point.Y, 0);
+            double distance = 12 * 25.4 * gridline.Distance(zeropoint);
+            double movedis = Math.Abs(distance - Round(distance, roundto));
+            return movedis;
+        }
     }
-
-
     public class BeamSelectionFilter : ISelectionFilter
     {
         public bool AllowElement(Element elem)
@@ -100,12 +128,11 @@ namespace dinhthi01
             return false;
         }
     }
-
-    public class DimSelectionFilter : ISelectionFilter
-    {             //Chọn dim
+    public class StruturalColumnFilter : ISelectionFilter
+    {
         public bool AllowElement(Element elem)
         {
-            if (elem is Dimension) return true;
+            if (elem is FamilyInstance && elem.Category.Id.IntegerValue == (int)BuiltInCategory.OST_StructuralColumns) return true;
             return false;
         }
 
@@ -114,27 +141,20 @@ namespace dinhthi01
             return false;
         }
     }
-    public class Lamtron
+    public class StructuralWallFilter : ISelectionFilter
     {
-        public static double Round(double dimvalue)
+        public bool AllowElement(Element elem)
         {
-            // Thay 5 = roundvalue cho bài toán tổng quát
-            if (dimvalue % 5 >= 2.5) dimvalue = dimvalue - dimvalue % 5 + 5;
-            else if (dimvalue % 5 < 2.5 && dimvalue % 5 > 0) dimvalue = dimvalue - dimvalue % 5;
-            return dimvalue;
+            if (elem.Category.Id.IntegerValue == (int)BuiltInCategory.OST_Walls) return true;
+            return false;
         }
-    }
-    public class GetDistance
-    {
-        public static double Distance(FamilyInstance beam, Grid grid)
-        {
-            Line gridline = grid.Curve as Line;
-            LocationCurve beamcurve = beam.Location as LocationCurve;
-            Line beamline = beamcurve.Curve as Line;
-            XYZ point = new XYZ(0.5*(beamline.GetEndPoint(0).X+beamline.GetEndPoint(1).X),0.5*(beamline.GetEndPoint(1).Y+ beamline.GetEndPoint(0).Y), 0);
-            double distance = 12 * 25.4 * gridline.Distance(point);
-            return distance;
-        }
-    }
 
+        public bool AllowReference(Reference reference, XYZ position)
+        {
+            return false;
+        }
+    }
 }
+    
+ 
+    
