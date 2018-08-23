@@ -16,7 +16,7 @@ namespace dinhthi01
 
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
-        {
+        {   
             UIApplication uiapp = commandData.Application;
             UIDocument uidoc = uiapp.ActiveUIDocument;
 
@@ -123,6 +123,7 @@ namespace dinhthi01
     {
         public static double Round(double dimvalue)
         {
+            // Thay 5 = roundvalue cho bài toán tổng quát
             if (dimvalue % 5 >= 2.5) dimvalue = dimvalue - dimvalue % 5 + 5;
             else if (dimvalue % 5 < 2.5 && dimvalue % 5 > 0) dimvalue = dimvalue - dimvalue % 5;
             return dimvalue;
@@ -135,7 +136,7 @@ namespace dinhthi01
             Line gridline = grid.Curve as Line;
             LocationCurve beamcurve = beam.Location as LocationCurve;
             Line beamline = beamcurve.Curve as Line;
-            XYZ point = new XYZ(beamline.GetEndPoint(0).X, beamline.GetEndPoint(0).Y, 0);
+            XYZ point = new XYZ(0.5*(beamline.GetEndPoint(0).X+beamline.GetEndPoint(1).X),0.5*(beamline.GetEndPoint(1).Y+ beamline.GetEndPoint(0).Y), 0);
             double distance = 12 * 25.4 * gridline.Distance(point);
             return distance;
         }
