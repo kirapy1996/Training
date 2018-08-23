@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="Command">
+    <Name>dinhthi01</Name>
+    <Assembly>D:\DinhThi\API\dinhthi01\dinhthi01\bin\Debug\dinhthi01.dll</Assembly>
+    <AddInId>f80adeb4-0028-48f3-9027-cf73eef5d2a4</AddInId>
+    <FullClassName>dinhthi01.Command</FullClassName>
+    <VendorId>DinhThi_ThucTap</VendorId>
+  </AddIn>
+</RevitAddIns>
