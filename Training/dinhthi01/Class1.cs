@@ -41,10 +41,7 @@ namespace dinhthi01
             Line beamline = beamcurve.Curve as Line;
             Line gridline = grid.Curve as Line;
 
-
-            //Lấy khoảng cách từ endpoin của Beam tới gridline
-            // Gridline phải bao trùm dầm thì kết quả mới chính xác 
-
+                        
             double distance = GetDistance.Distance(beam, grid);
             double movedis = Math.Abs(distance - Lamtron.Round(distance));
 
@@ -53,7 +50,7 @@ namespace dinhthi01
                 TaskDialog.Show("Result", "Ko can chinh");
                 return Result.Succeeded;
             }
-            //Tim vector move   
+               
 
             XYZ movevector = new XYZ(-beamline.Direction.Y, beamline.Direction.X, 0).Normalize();
             movevector = movevector * movedis / 12 / 25.4;
@@ -62,9 +59,7 @@ namespace dinhthi01
             using (Transaction transaction = new Transaction(uidoc.Document))
             {
                 transaction.Start("Beam Moving");
-                // unjoin beam
-                // thuật toán làm tròn
-                // Vector XYZ ? và hướng move
+                
 
                 beam.Location.Move(movevector);                
                 if (Math.Abs(GetDistance.Distance(beam, grid)%5) >0.01 && Math.Abs(GetDistance.Distance(beam, grid) % 5)<4.99)
