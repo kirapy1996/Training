@@ -16,7 +16,7 @@ namespace dinhthi01
 
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
-        {
+        {   
             UIApplication uiapp = commandData.Application;
             UIDocument uidoc = uiapp.ActiveUIDocument;
 
@@ -41,10 +41,7 @@ namespace dinhthi01
             Line beamline = beamcurve.Curve as Line;
             Line gridline = grid.Curve as Line;
 
-
-            //Lấy khoảng cách từ endpoin của Beam tới gridline
-            // Gridline phải bao trùm dầm thì kết quả mới chính xác 
-
+                        
             double distance = GetDistance.Distance(beam, grid);
             double movedis = Math.Abs(distance - Lamtron.Round(distance));
 
@@ -53,7 +50,7 @@ namespace dinhthi01
                 TaskDialog.Show("Result", "Ko can chinh");
                 return Result.Succeeded;
             }
-            //Tim vector move   
+               
 
             XYZ movevector = new XYZ(-beamline.Direction.Y, beamline.Direction.X, 0).Normalize();
             movevector = movevector * movedis / 12 / 25.4;
@@ -62,9 +59,7 @@ namespace dinhthi01
             using (Transaction transaction = new Transaction(uidoc.Document))
             {
                 transaction.Start("Beam Moving");
-                // unjoin beam
-                // thuật toán làm tròn
-                // Vector XYZ ? và hướng move
+                
 
                 beam.Location.Move(movevector);                
                 if (Math.Abs(GetDistance.Distance(beam, grid)%5) >0.01 && Math.Abs(GetDistance.Distance(beam, grid) % 5)<4.99)
@@ -123,6 +118,7 @@ namespace dinhthi01
     {
         public static double Round(double dimvalue)
         {
+            // Thay 5 = roundvalue cho bài toán tổng quát
             if (dimvalue % 5 >= 2.5) dimvalue = dimvalue - dimvalue % 5 + 5;
             else if (dimvalue % 5 < 2.5 && dimvalue % 5 > 0) dimvalue = dimvalue - dimvalue % 5;
             return dimvalue;
@@ -135,7 +131,7 @@ namespace dinhthi01
             Line gridline = grid.Curve as Line;
             LocationCurve beamcurve = beam.Location as LocationCurve;
             Line beamline = beamcurve.Curve as Line;
-            XYZ point = new XYZ(beamline.GetEndPoint(0).X, beamline.GetEndPoint(0).Y, 0);
+            XYZ point = new XYZ(0.5*(beamline.GetEndPoint(0).X+beamline.GetEndPoint(1).X),0.5*(beamline.GetEndPoint(1).Y+ beamline.GetEndPoint(0).Y), 0);
             double distance = 12 * 25.4 * gridline.Distance(point);
             return distance;
         }
