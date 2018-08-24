@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="Command">
+    <Name>Sua Dam</Name>
+    <Assembly>C:\Users\PC\source\repos\ColumnRepair\ColumnRepair\bin\Debug\ColumnRepair.dll</Assembly>
+    <ClientId>45ba6768-b557-4a12-afdc-ca44b2838602</ClientId>
+    <FullClassName>ColumnRepair.Class1</FullClassName>
+	<VendorId>Cuong</VendorId>
+	<VendorDescription>Autodesk, subscription.autodesk.com</VendorDescription>
+  </AddIn>
+</RevitAddIns>
