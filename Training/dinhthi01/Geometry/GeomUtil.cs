@@ -755,15 +755,15 @@ namespace Geometry
             double angle = GetAngle(targetVec, vecX, vecY);
             return new UV(Math.Cos(angle) * len, Math.Sin(angle) * len);
         }
-        public static double GetAngle2(XYZ targetVec, XYZ vecX, XYZ vecY, XYZ vecZ)
-        {
-            vecX = vecX.Normalize(); vecY = vecY.Normalize(); vecZ = vecZ.Normalize();
-            if (!IsEqual(vecX.DotProduct(vecY), 0)) throw new Exception("Two basis X and Y is not perpecular!");
-            if (!IsEqual(vecX.CrossProduct(vecY), vecZ)) throw new Exception("Three basises are not a coordiante!");
-            Plane pl = Plane.CreateByOriginAndBasis(XYZ.Zero, vecX, vecY);
-            XYZ pjPnt = CheckGeometry.GetProjectPoint(pl, targetVec);
-            return GetAngle(targetVec, pjPnt, vecZ);
-        }
+        //public static double GetAngle2(XYZ targetVec, XYZ vecX, XYZ vecY, XYZ vecZ)
+        //{
+        //    vecX = vecX.Normalize(); vecY = vecY.Normalize(); vecZ = vecZ.Normalize();
+        //    if (!IsEqual(vecX.DotProduct(vecY), 0)) throw new Exception("Two basis X and Y is not perpecular!");
+        //    if (!IsEqual(vecX.CrossProduct(vecY), vecZ)) throw new Exception("Three basises are not a coordiante!");
+        //    Plane pl = Plane.CreateByOriginAndBasis(XYZ.Zero, vecX, vecY);
+        //    XYZ pjPnt = CheckGeometry.GetProjectPoint(pl, targetVec);
+        //    return GetAngle(targetVec, pjPnt, vecZ);
+        //}
 
         public static XYZ GetPositionVector(XYZ targetVec, XYZ vecX, XYZ vecY)
         {
