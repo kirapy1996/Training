@@ -50,8 +50,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
+<<<<<<< HEAD
+    <Compile Include="Geometry\GeomUtil.cs" />
+    <Compile Include="Cuong.cs" />
+=======
     <Compile Include="Cuong.cs" />
     <Compile Include="Geometry\GeomUtil.cs" />
+>>>>>>> 3af68c8f4cf3d33e80722c02c5ec7b14c41e0137
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
