@@ -25,36 +25,59 @@ namespace ColumnRepair
             Reference gridref = uidoc.Selection.PickObject(ObjectType.Element, new GridSelectionFilter());
             Grid grid = uidoc.Document.GetElement(gridref) as Grid;
 
-            Reference columnref = uidoc.Selection.PickObject(ObjectType.Element, new ColumnSelectionFilter());
-            FamilyInstance column = uidoc.Document.GetElement(columnref) as FamilyInstance;
-
-            LocationPoint locationPoint = column.Location as LocationPoint;
-            XYZ currentLocation = locationPoint.Point;
+            Reference gridref1 = uidoc.Selection.PickObject(ObjectType.Element, new GridSelectionFilter());
+            Grid grid1 = uidoc.Document.GetElement(gridref1) as Grid;
 
             Line gridline = grid.Curve as Line;
 
-            double distance = GetDistance.Distance(column, grid);
-            double movedis = (distance - Lamtron.Round(distance)) / 12 / 25.4;
+            Line gridline1 = grid1.Curve as Line;
 
-            //if (movedis <= 0.01)
-            //{
-            //    TaskDialog.Show("Result", "Ko can chinh");
-            //    return Result.Succeeded;
-            //}
-
-            XYZ newLocation = new XYZ(-gridline.Direction.Y * movedis, gridline.Direction.X * movedis, 0);
-            //XYZ newLocation = new XYZ(10, 10, 0);
-            using (Transaction t = new Transaction(doc, "move"))
+            ColumnSelectionFilter columnSelFil = new ColumnSelectionFilter();
+            List<Element> elems =  uidoc.Selection.PickElementsByRectangle(columnSelFil) as List<Element>;
+            List<Reference> elemref = new List<Reference>();
+            foreach (Element e in elems)
             {
-                t.Start("move");
-                ElementTransformUtils.MoveElement(doc, column.Id, newLocation);
-                if (Math.Abs(GetDistance.Distance(column, grid) % 5) > 0.01 && Math.Abs(GetDistance.Distance(column, grid) % 5) < 4.99)
+                //Reference columnref = uidoc.Selection.PickObject(ObjectType.Element, new ColumnSelectionFilter());
+                FamilyInstance column = e as FamilyInstance;
+
+                //FamilyInstance column = uidoc.Document.GetElement(columnref) as FamilyInstance;
+                LocationPoint locationPoint = column.Location as LocationPoint;
+                XYZ currentLocation = locationPoint.Point;
+
+                double distance = GetDistance.Distance(column, grid);
+                double movedis = (distance - Lamtron.Round(distance)) / 12 / 25.4;
+
+                XYZ newLocation = new XYZ(-gridline.Direction.Y * movedis, gridline.Direction.X * movedis, 0);
+
+                using (Transaction t = new Transaction(doc, "move"))
                 {
-                    XYZ newLocation1 = new XYZ(2* gridline.Direction.Y * movedis, -2* gridline.Direction.X * movedis, 0);
-                    ElementTransformUtils.MoveElement(doc, column.Id, newLocation1);
+                    t.Start("move");
+                    ElementTransformUtils.MoveElement(doc, column.Id, newLocation);
+                    if (Math.Abs(GetDistance.Distance(column, grid) % 5) > 0.01 && Math.Abs(GetDistance.Distance(column, grid) % 5) < 4.99)
+                    {
+                        XYZ newLocationrepair = new XYZ(2 * gridline.Direction.Y * movedis, -2 * gridline.Direction.X * movedis, 0);
+                        ElementTransformUtils.MoveElement(doc, column.Id, newLocationrepair);
+                    }
+                    t.Commit();
                 }
-                t.Commit();
+                double distance1 = GetDistance.Distance(column, grid1);
+                double movedis1 = (distance1 - Lamtron.Round(distance1)) / 12 / 25.4;
+
+                XYZ newLocation1 = new XYZ(-gridline1.Direction.Y * movedis1, gridline1.Direction.X * movedis1, 0);
+
+                using (Transaction t = new Transaction(doc, "move"))
+                {
+                    t.Start("move");
+                    ElementTransformUtils.MoveElement(doc, column.Id, newLocation1);
+                    if (Math.Abs(GetDistance.Distance(column, grid1) % 5) > 0.01 && Math.Abs(GetDistance.Distance(column, grid1) % 5) < 4.99)
+                    {
+                        XYZ newLocationrepair1 = new XYZ(2 * gridline1.Direction.Y * movedis1, -2 * gridline1.Direction.X * movedis1, 0);
+                        ElementTransformUtils.MoveElement(doc, column.Id, newLocationrepair1);
+                    }
+                    t.Commit();
+                }
             }
+            TaskDialog.Show("ads", "ASd");
 
             return Result.Succeeded;
         }
@@ -63,6 +86,19 @@ namespace ColumnRepair
             Reference reference = uidoc.Selection.PickObject(ObjectType.Element);
             Element element = uidoc.Document.GetElement(reference);
             return element;
+        }
+    }
+
+    [Transaction(TransactionMode.Manual)]
+    public class Class2 : IExternalCommand
+    {
+        public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+        {
+            Singleton.Instance = new Singleton();
+            Singleton.Instance.RevitData.UIApplication = commandData.Application;
+            Singleton.Instance.OtherData.InputForm.ShowDialog();
+
+            return Result.Succeeded;
         }
     }
     public class ColumnSelectionFilter : ISelectionFilter

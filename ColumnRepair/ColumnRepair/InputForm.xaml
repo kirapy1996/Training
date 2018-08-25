@@ -1,0 +1,28 @@
+﻿<Window x:Class="ColumnRepair.InputForm"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ColumnRepair"
+             SizeToContent="WidthAndHeight">
+    <StackPanel Orientation="Horizontal" Margin="10">
+        <ListBox Width="200" ItemsSource="{Binding Grids}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Label Content="{Binding Name}"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <ListBox Width="200" SelectionChanged="ListBox_SelectionChanged">
+
+        </ListBox>
+        <StackPanel Orientation="Vertical">
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Input Rounding:"/>
+                <TextBox Text="5" Width="30"/>
+            </StackPanel>
+            <Button Content="Pick Grids" Click="Button_Click"/>
+            <Button Content="Pick Columns"/>
+        </StackPanel>
+    </StackPanel>
+</Window>
