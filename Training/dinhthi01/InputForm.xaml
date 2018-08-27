@@ -1,0 +1,47 @@
+﻿<Window x:Class="dinhthi01.InputForm"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:dinhthi01"
+             mc:Ignorable="d" 
+             SizeToContent="WidthAndHeight"
+        Title="Modify Elements">
+
+    <StackPanel Margin="0" Background="#FF22CCD4" Height="155" Width="200">
+        <Grid>
+        <Label FontWeight="bold"
+               HorizontalAlignment="Left"
+               Margin="20,5,0,5">
+            Round to : 
+        </Label>
+            <TextBox Height="20"
+                     Width="75"
+                     HorizontalAlignment="Right"
+                     Margin="0,0,30,0" TextChanged="TextBox_TextChanged">
+                
+            </TextBox>
+        </Grid>
+        <Label FontWeight="bold"
+               HorizontalAlignment="Left"
+               Margin="20,5,0,5">Select Element's Category</Label>
+            <CheckBox x:Name="Frame"  HorizontalAlignment="Left" Margin="30,0,0,0" Checked="Frame_Checked" >Structural Framings</CheckBox>
+            <CheckBox x:Name="Column" HorizontalAlignment="Left" Margin="30,0,0,0" Checked="Column_Checked">Structural Columns</CheckBox>
+            <CheckBox x:Name="Walls" HorizontalAlignment="Left" Margin="30,0,0,0" Checked="Walls_Checked">Walls</CheckBox>
+            <Grid>
+                <Button Height="20" Width="50"
+                HorizontalAlignment="Left"
+                Margin="25,5,0,0"
+                Content="Ok" Click="Button_Click">
+
+                </Button>
+                <Button Height="20" Width="50"
+                HorizontalAlignment="Right"
+                Margin="0,5,25,0"
+                Content="Cancel" Click="Button_Click_1">
+                </Button>
+            </Grid>
+        </StackPanel>
+   
+
+</Window>

@@ -10,3 +10,8 @@ D:\DinhThi\GitHub\Training\Training\dinhthi01\obj\Debug\dinhthi01.csprojAssembly
 D:\DinhThi\GitHub\Training\Training\dinhthi01\obj\Debug\dinhthi01.csproj.CoreCompileInputs.cache
 D:\DinhThi\GitHub\Training\Training\dinhthi01\obj\Debug\dinhthi01.dll
 D:\DinhThi\GitHub\Training\Training\dinhthi01\obj\Debug\dinhthi01.pdb
+D:\DinhThi\GitHub\Training\Training\dinhthi01\obj\Debug\InputForm.g.cs
+D:\DinhThi\GitHub\Training\Training\dinhthi01\obj\Debug\dinhthi01_MarkupCompile.cache
+D:\DinhThi\GitHub\Training\Training\dinhthi01\obj\Debug\dinhthi01_MarkupCompile.lref
+D:\DinhThi\GitHub\Training\Training\dinhthi01\obj\Debug\InputForm.baml
+D:\DinhThi\GitHub\Training\Training\dinhthi01\obj\Debug\dinhthi01.g.resources
