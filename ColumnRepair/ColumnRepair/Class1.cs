@@ -77,16 +77,15 @@ namespace ColumnRepair
                     t.Commit();
                 }
             }
-            TaskDialog.Show("ads", "ASd");
 
             return Result.Succeeded;
         }
-        public Element SelectionElement(UIDocument uidoc, Document doc)
-        {
-            Reference reference = uidoc.Selection.PickObject(ObjectType.Element);
-            Element element = uidoc.Document.GetElement(reference);
-            return element;
-        }
+        //public Element SelectionElement(UIDocument uidoc, Document doc)
+        //{
+        //    Reference reference = uidoc.Selection.PickObject(ObjectType.Element);
+        //    Element element = uidoc.Document.GetElement(reference);
+        //    return element;
+        //}
     }
 
     [Transaction(TransactionMode.Manual)]

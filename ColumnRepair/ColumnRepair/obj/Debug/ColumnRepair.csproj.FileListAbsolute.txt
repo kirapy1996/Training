@@ -8,3 +8,4 @@ C:\Users\PC\source\repos\ColumnRepair\ColumnRepair\obj\Debug\ColumnRepair.g.reso
 C:\Users\PC\source\repos\ColumnRepair\ColumnRepair\obj\Debug\ColumnRepair.csproj.CoreCompileInputs.cache
 C:\Users\PC\source\repos\ColumnRepair\ColumnRepair\obj\Debug\ColumnRepair.dll
 C:\Users\PC\source\repos\ColumnRepair\ColumnRepair\obj\Debug\ColumnRepair.pdb
+C:\Users\PC\source\repos\ColumnRepair\ColumnRepair\obj\Debug\ColumnRepair.csprojAssemblyReference.cache
