@@ -4,10 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ColumnRepair"
-             SizeToContent="WidthAndHeight">
+            Title="Elements Repair"
+             SizeToContent="WidthAndHeight" >
     <StackPanel Orientation="Horizontal" Margin="10">
         <StackPanel Orientation="Vertical">
-            <Label HorizontalAlignment="Center" Content="Girds Name:"/>
+            <Label HorizontalAlignment="Center" Content="Girds Name:" />
             <ListBox Width="150" HorizontalAlignment="Center" ItemsSource="{Binding Grids}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
@@ -17,7 +18,7 @@
             </ListBox>
         </StackPanel>
         <StackPanel Orientation="Vertical">
-            <Label HorizontalAlignment="Center" Content="Columns Name:"/>
+            <Label HorizontalAlignment="Center" Content="Elements Name:"/>
             <ListBox Width="150" ItemsSource="{Binding Elements}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
@@ -27,7 +28,7 @@
             </ListBox>
         </StackPanel>
         <StackPanel Orientation="Vertical">
-            <Label Background="LightYellow" HorizontalAlignment="Center" Content="Columns Id:"/>
+            <Label HorizontalAlignment="Center" Content="Elements Id:"/>
             <ListBox Width="100" ItemsSource="{Binding Elements}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
@@ -38,11 +39,18 @@
         </StackPanel>
         <StackPanel Orientation="Vertical">
             <StackPanel Orientation="Horizontal">
-                <Label Content="Input Rounding:"/>
-                <TextBox Text="5" Width="30"/>
+                <Label Background="LightSteelBlue" Content="Input Rounding:"/>
+                <TextBox Name="txtroundto" Text="5" Width="30"/>
             </StackPanel>
-            <Button Content="Pick Grids" Click="Button_Click"/>
-            <Button Content="Pick Columns" Click="Button_Click_1"/>
+            <Button Content="Pick  Two Grids" Click="Button_Click"/>
+            <StackPanel Orientation="Horizontal">
+                <Label Background="LightSteelBlue" Content="Pick Elements:"/>
+                <ComboBox Width="40" >
+                    <Button Width="100" Content="Pick Columns" Click="Button_Click_1"/>
+                    <Button Width="100" Content="Pick Beams" Click="Button_Click_3"/>
+                    <Button Width="100" Content="Pick Wall" Click="Button_Click_4"/>
+                </ComboBox>
+            </StackPanel>
             <Button Content="OK" Click="Button_Click_2"/>
         </StackPanel>
     </StackPanel>
