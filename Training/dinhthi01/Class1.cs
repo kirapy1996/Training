@@ -5,6 +5,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
 using System.IO;
+using System.Collections.Generic;
 
 
 namespace dinhthi01
@@ -26,54 +27,57 @@ namespace dinhthi01
             Reference gridrefY = sel.PickObject(ObjectType.Element, new GridSelectionFilter());
             Grid gridY = uidoc.Document.GetElement(gridrefY) as Grid;
             
-            Reference elemref = sel.PickObject(ObjectType.Element, new BeamSelectionFilter());
-            FamilyInstance elem = uidoc.Document.GetElement(elemref) as FamilyInstance;
-            LocationCurve elemcurve = elem.Location as LocationCurve;
-            Line elemline = elemcurve.Curve as Line;
-            Line gridlineX = gridX.Curve as Line;
-            Line gridlineY = gridY.Curve as Line;
-
-            //Kiểm tra và đặt tên Grid, GridX song song với Location.Curve - Line, Grid Y vuông góc,...
-
-            if (Geometry.GeomUtil.IsSameOrOppositeDirection(elemline.Direction, gridlineY.Direction))
-            { 
-                gridX = uidoc.Document.GetElement(gridrefY) as Grid;
-                gridY = uidoc.Document.GetElement(gridrefX) as Grid;
-                gridlineX = gridX.Curve as Line;
-                gridlineY = gridY.Curve as Line;
-            }
-            double movedis = GetMoveDistance(elemline, gridX,roundto);
-            // Move dầm phương song song
-            if (movedis > precision)
+            List<Element> elemlist = sel.PickElementsByRectangle(new BeamSelectionFilter()) as List<Element>;
+            foreach (Element elem in elemlist)
             {
-                XYZ movevector1 = new XYZ(-elemline.Direction.Y, elemline.Direction.X, 0).Normalize() * Geometry.GeomUtil.milimeter2Feet(movedis);
+                
+                LocationCurve elemcurve = elem.Location as LocationCurve;
+                Line elemline = elemcurve.Curve as Line;
+                Line gridlineX = gridX.Curve as Line;
+                Line gridlineY = gridY.Curve as Line;
 
-                using (Transaction transactionX = new Transaction(uidoc.Document))
+                //Kiểm tra và đặt tên Grid, GridX song song với Location.Curve - Line, Grid Y vuông góc,...
+
+                if (Geometry.GeomUtil.IsSameOrOppositeDirection(elemline.Direction, gridlineY.Direction))
                 {
-                    transactionX.Start("Beam Moving X");
-                    elem.Location.Move(movevector1);
-                    if (Math.Abs(GetMoveDistance(elemline, gridX, roundto) % roundto) > precision && Math.Abs(GetMoveDistance(elemline, gridX, roundto) % roundto) < roundto - precision)
-                    {
-                        elem.Location.Move(-2 * movevector1);
-                    }
-                    transactionX.Commit();
+                    gridX = uidoc.Document.GetElement(gridrefY) as Grid;
+                    gridY = uidoc.Document.GetElement(gridrefX) as Grid;
+                    gridlineX = gridX.Curve as Line;
+                    gridlineY = gridY.Curve as Line;
                 }
-            }
-            movedis = GetMoveDistance(elemline.GetEndPoint(0), gridY, roundto);
-            TaskDialog.Show("ss", movedis.ToString());
-            // Move dầm phương vuông góc
-            if (movedis >= precision)
-            {
-                XYZ movevector2 = new XYZ(elemline.Direction.X, elemline.Direction.Y, 0).Normalize() * Geometry.GeomUtil.milimeter2Feet(movedis);
-                using (Transaction transactionY = new Transaction(uidoc.Document))
+                double movedis = GetMoveDistance(elemline, gridX, roundto);
+                // Move dầm phương song song
+                if (movedis > precision)
                 {
-                    transactionY.Start("Beam moving Y");
-                    elem.Location.Move(movevector2);
-                    if (Math.Abs(GetMoveDistance(elemline.GetEndPoint(0), gridY, roundto) % roundto) > precision && Math.Abs(GetMoveDistance(elemline.GetEndPoint(0), gridY, roundto) % roundto) < (roundto - precision))
+                    XYZ movevector1 = new XYZ(-elemline.Direction.Y, elemline.Direction.X, 0).Normalize() * Geometry.GeomUtil.milimeter2Feet(movedis);
+
+                    using (Transaction transactionX = new Transaction(uidoc.Document))
                     {
-                        elem.Location.Move(-2 * movevector2);
+                        transactionX.Start("Beam Moving X");
+                        elem.Location.Move(movevector1);
+                        if (Math.Abs(GetMoveDistance(elemline, gridX, roundto) % roundto) > precision && Math.Abs(GetMoveDistance(elemline, gridX, roundto) % roundto) < roundto - precision)
+                        {
+                            elem.Location.Move(-2 * movevector1);
+                        }
+                        transactionX.Commit();
                     }
-                    transactionY.Commit();
+                }
+                movedis = GetMoveDistance(elemline.GetEndPoint(0), gridY, roundto);
+                //TaskDialog.Show("ss", movedis.ToString());
+                // Move dầm phương vuông góc
+                if (movedis >= precision)
+                {
+                    XYZ movevector2 = new XYZ(elemline.Direction.X, elemline.Direction.Y, 0).Normalize() * Geometry.GeomUtil.milimeter2Feet(movedis);
+                    using (Transaction transactionY = new Transaction(uidoc.Document))
+                    {
+                        transactionY.Start("Beam moving Y");
+                        elem.Location.Move(movevector2);
+                        if (Math.Abs(GetMoveDistance(elemline.GetEndPoint(0), gridY, roundto) % roundto) > precision && Math.Abs(GetMoveDistance(elemline.GetEndPoint(0), gridY, roundto) % roundto) < (roundto - precision))
+                        {
+                            elem.Location.Move(-2 * movevector2);
+                        }
+                        transactionY.Commit();
+                    }
                 }
             }
             return Result.Succeeded;
