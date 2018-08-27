@@ -4,11 +4,7 @@
 library
 C#
 .cs
-<<<<<<< HEAD
-F:\1.THUC TAP- BIM\Thực hành Addin_CườngDTV\GitHub\Training\ColumnRepair\ColumnRepair\obj\Debug\
-=======
-D:\DinhThi\GitHub\Training\ColumnRepair\ColumnRepair\obj\Debug\
->>>>>>> df24ebde0e37900d38dd345bf2250cb6af1103e9
+C:\Users\PC\source\repos\ColumnRepair\ColumnRepair\obj\Debug\
 ColumnRepair
 none
 false
@@ -16,6 +12,7 @@ DEBUG;TRACE
 
 1-1345433122
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 7-1032480487
 15932240940
@@ -27,7 +24,11 @@ DEBUG;TRACE
 >>>>>>> df24ebde0e37900d38dd345bf2250cb6af1103e9
 13-1505183044
 >>>>>>> 9463624c44b3ad0ff5509cb3d8586f5672bb60fe
+=======
+7-1032480487
+15932240940
+>>>>>>> 979d6cc84551552c70ad689f6cb1fa2c7aa8eb86
 InputForm.xaml;
 
-True
+False
 

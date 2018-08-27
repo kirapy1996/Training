@@ -33,8 +33,8 @@ namespace ColumnRepair
             Line gridline1 = grid1.Curve as Line;
 
             ColumnSelectionFilter columnSelFil = new ColumnSelectionFilter();
-            List<Element> elems =  uidoc.Selection.PickElementsByRectangle(columnSelFil) as List<Element>;
-            List<Reference> elemref = new List<Reference>();
+            List<Reference> rfs1 = uidoc.Selection.PickObjects(ObjectType.Element, new ColumnSelectionFilter()) as List<Reference>;
+            List<Element> elems = rfs1.Select(x => uidoc.Document.GetElement(x) as Element).ToList();
             foreach (Element e in elems)
             {
                 //Reference columnref = uidoc.Selection.PickObject(ObjectType.Element, new ColumnSelectionFilter());
@@ -127,6 +127,34 @@ namespace ColumnRepair
         }
     }
 
+    public class BeamSelectionFilter : ISelectionFilter
+    {
+        public bool AllowElement(Element elem)
+        {
+            if (elem is FamilyInstance && elem.Category.Id.IntegerValue == (int)BuiltInCategory.OST_StructuralFraming) return true;
+            return false;
+        }
+
+        public bool AllowReference(Reference reference, XYZ position)
+        {
+            return false;
+        }
+    }
+
+    public class StructuralWallFilter : ISelectionFilter
+    {
+        public bool AllowElement(Element elem)
+        {
+            if (elem.Category.Id.IntegerValue == (int)BuiltInCategory.OST_Walls) return true;
+            return false;
+        }
+
+        public bool AllowReference(Reference reference, XYZ position)
+        {
+            return false;
+        }
+    }
+
     public class DimSelectionFilter : ISelectionFilter
     {             //Chọn dim
         public bool AllowElement(Element elem)
@@ -149,7 +177,15 @@ namespace ColumnRepair
             else if (dimvalue % 5 < 2.5 && dimvalue % 5 > 0) dimvalue = dimvalue - dimvalue % 5;
             return dimvalue;
         }
+        public static double Round(double dimvalue, double roundto)
+        {
+            // roundto 1,5,10
+            if ((dimvalue % roundto) >= (roundto / 2)) dimvalue = dimvalue - dimvalue % roundto + roundto;
+            else dimvalue = dimvalue - dimvalue % roundto;
+            return dimvalue;
+        }
     }
+
     public class GetDistance
     {
         public static double Distance(FamilyInstance column, Grid grid)
