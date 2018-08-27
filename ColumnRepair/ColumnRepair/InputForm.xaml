@@ -6,23 +6,44 @@
              xmlns:local="clr-namespace:ColumnRepair"
              SizeToContent="WidthAndHeight">
     <StackPanel Orientation="Horizontal" Margin="10">
-        <ListBox Width="200" ItemsSource="{Binding Grids}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Label Content="{Binding Name}"/>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-        <ListBox Width="200" SelectionChanged="ListBox_SelectionChanged">
-
-        </ListBox>
+        <StackPanel Orientation="Vertical">
+            <Label HorizontalAlignment="Center" Content="Girds Name:"/>
+            <ListBox Width="150" HorizontalAlignment="Center" ItemsSource="{Binding Grids}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Label Content="{Binding Name}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </StackPanel>
+        <StackPanel Orientation="Vertical">
+            <Label HorizontalAlignment="Center" Content="Columns Name:"/>
+            <ListBox Width="150" ItemsSource="{Binding Elements}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Label HorizontalAlignment="Center" Content="{Binding Name}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </StackPanel>
+        <StackPanel Orientation="Vertical">
+            <Label Background="LightYellow" HorizontalAlignment="Center" Content="Columns Id:"/>
+            <ListBox Width="100" ItemsSource="{Binding Elements}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Label HorizontalAlignment="Center" Content="{Binding Id}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </StackPanel>
         <StackPanel Orientation="Vertical">
             <StackPanel Orientation="Horizontal">
                 <Label Content="Input Rounding:"/>
                 <TextBox Text="5" Width="30"/>
             </StackPanel>
             <Button Content="Pick Grids" Click="Button_Click"/>
-            <Button Content="Pick Columns"/>
+            <Button Content="Pick Columns" Click="Button_Click_1"/>
+            <Button Content="OK" Click="Button_Click_2"/>
         </StackPanel>
     </StackPanel>
 </Window>

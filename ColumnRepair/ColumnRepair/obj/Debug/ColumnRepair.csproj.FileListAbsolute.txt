@@ -8,9 +8,13 @@ C:\Users\PC\source\repos\ColumnRepair\ColumnRepair\obj\Debug\ColumnRepair.g.reso
 C:\Users\PC\source\repos\ColumnRepair\ColumnRepair\obj\Debug\ColumnRepair.csproj.CoreCompileInputs.cache
 C:\Users\PC\source\repos\ColumnRepair\ColumnRepair\obj\Debug\ColumnRepair.dll
 C:\Users\PC\source\repos\ColumnRepair\ColumnRepair\obj\Debug\ColumnRepair.pdb
+<<<<<<< HEAD
 D:\DinhThi\GitHub\Training\ColumnRepair\ColumnRepair\obj\Debug\ColumnRepair.csprojAssemblyReference.cache
 D:\DinhThi\GitHub\Training\ColumnRepair\ColumnRepair\obj\Debug\InputForm.g.cs
 D:\DinhThi\GitHub\Training\ColumnRepair\ColumnRepair\obj\Debug\ColumnRepair_MarkupCompile.cache
 D:\DinhThi\GitHub\Training\ColumnRepair\ColumnRepair\obj\Debug\ColumnRepair_MarkupCompile.lref
 D:\DinhThi\GitHub\Training\ColumnRepair\ColumnRepair\obj\Debug\ColumnRepair.dll
 D:\DinhThi\GitHub\Training\ColumnRepair\ColumnRepair\obj\Debug\ColumnRepair.pdb
+=======
+C:\Users\PC\source\repos\ColumnRepair\ColumnRepair\obj\Debug\ColumnRepair.csprojAssemblyReference.cache
+>>>>>>> 9463624c44b3ad0ff5509cb3d8586f5672bb60fe
