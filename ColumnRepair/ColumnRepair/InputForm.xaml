@@ -48,7 +48,6 @@
                 <ComboBox Width="40" >
                     <Button Width="100" Content="Pick Columns" Click="Button_Click_1"/>
                     <Button Width="100" Content="Pick Beams" Click="Button_Click_3"/>
-                    <Button Width="100" Content="Pick Wall" Click="Button_Click_4"/>
                 </ComboBox>
             </StackPanel>
             <Button Content="OK" Click="Button_Click_2"/>

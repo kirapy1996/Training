@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
+    <Compile Include="GeomUtil.cs" />
     <Compile Include="InputForm.xaml.cs">
       <DependentUpon>InputForm.xaml</DependentUpon>
     </Compile>
