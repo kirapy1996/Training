@@ -4,7 +4,11 @@
 library
 C#
 .cs
+<<<<<<< HEAD
 D:\DinhThi\GitHub\Training\ColumnRepair\ColumnRepair\obj\Debug\
+=======
+C:\Users\PC\source\repos\ColumnRepair\ColumnRepair\obj\Debug\
+>>>>>>> 421a5705934753240d76399eb4ff15fb786f4fac
 ColumnRepair
 none
 false
@@ -12,9 +16,17 @@ DEBUG;TRACE
 
 1-1345433122
 
+<<<<<<< HEAD
 111274067737
 15932240940
 InputForm.xaml;
 
 False
+=======
+12-1142115287
+15932240940
+InputForm.xaml;
+
+True
+>>>>>>> 421a5705934753240d76399eb4ff15fb786f4fac
 

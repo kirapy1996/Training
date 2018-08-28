@@ -196,5 +196,19 @@ namespace ColumnRepair
             double distance = 12 * 25.4 * gridline.Distance(currentLocation);
             return distance;
         }
+        public static double GetMoveDistance(Line line, Grid grid, float roundto)
+        {
+            Line gridline = grid.Curve as Line;
+            XYZ point = new XYZ(Geometry.GeomUtil.GetMiddlePoint(line.GetEndPoint(0), line.GetEndPoint(1)).X, Geometry.GeomUtil.GetMiddlePoint(line.GetEndPoint(0), line.GetEndPoint(1)).Y, 0);
+            double distance = Geometry.GeomUtil.feet2Milimeter(gridline.Distance(point));
+            return distance;
+        }
+        public static double GetMoveDistance(XYZ point, Grid grid, float roundto)
+        {
+            Line gridline = grid.Curve as Line;
+            XYZ zeropoint = new XYZ(point.X, point.Y, 0);
+            double distance = 12 * 25.4 * gridline.Distance(zeropoint);
+            return distance;
+        }
     }
 }

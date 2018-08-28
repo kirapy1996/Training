@@ -70,48 +70,106 @@ namespace ColumnRepair
 
             Autodesk.Revit.DB.Line gridline1 = grid1.Curve as Autodesk.Revit.DB.Line;
 
-            int roundto = int.Parse(txtroundto.Text);
+            Autodesk.Revit.DB.Grid gridX = grid;
+            Autodesk.Revit.DB.Grid gridY = grid1;
+            Autodesk.Revit.DB.Line gridlineX = gridX.Curve as Autodesk.Revit.DB.Line;
+            Autodesk.Revit.DB.Line gridlineY = gridY.Curve as Autodesk.Revit.DB.Line;
+
+            float roundto = float.Parse(txtroundto.Text);
+            const double precision = 0.00001;
 
             foreach (Element emt in elems)
             {
-                //Reference columnref = uidoc.Selection.PickObject(ObjectType.Element, new ColumnSelectionFilter());
-                FamilyInstance column = emt as FamilyInstance;
-
-                //FamilyInstance column = uidoc.Document.GetElement(columnref) as FamilyInstance;
-                LocationPoint locationPoint = column.Location as LocationPoint;
-                XYZ currentLocation = locationPoint.Point;
-
-                double distance = GetDistance.Distance(column, grid);
-                double movedis = (distance - Lamtron.Round(distance,roundto)) / 12 / 25.4;
-
-                XYZ newLocation = new XYZ(-gridline.Direction.Y * movedis, gridline.Direction.X * movedis, 0);
-
-                using (Transaction t = new Transaction(doc, "move"))
+                if (emt is FamilyInstance && emt.Category.Id.IntegerValue == (int)BuiltInCategory.OST_StructuralColumns)
                 {
-                    t.Start("move");
-                    ElementTransformUtils.MoveElement(doc, column.Id, newLocation);
-                    if (Math.Abs(GetDistance.Distance(column, grid) % roundto) > 0.01 && Math.Abs(GetDistance.Distance(column, grid) % roundto) < 4.99)
+                    FamilyInstance column = emt as FamilyInstance;
+                    LocationPoint locationPoint = column.Location as LocationPoint;
+                    XYZ currentLocation = locationPoint.Point;
+
+                    double distance = GetDistance.Distance(column, grid);
+                    double movedis = (distance - Lamtron.Round(distance, roundto)) / 12 / 25.4;
+
+                    XYZ newLocation = new XYZ(-gridline.Direction.Y * movedis, gridline.Direction.X * movedis, 0);
+
+                    using (Transaction t = new Transaction(doc, "move"))
                     {
-                        XYZ newLocationrepair = new XYZ(2 * gridline.Direction.Y * movedis, -2 * gridline.Direction.X * movedis, 0);
-                        ElementTransformUtils.MoveElement(doc, column.Id, newLocationrepair);
+                        t.Start("move");
+                        ElementTransformUtils.MoveElement(doc, column.Id, newLocation);
+                        if (Math.Abs(GetDistance.Distance(column, grid) % roundto) > precision && Math.Abs(GetDistance.Distance(column, grid) % roundto) < (roundto-precision))
+                        {
+                            XYZ newLocationrepair = new XYZ(2 * gridline.Direction.Y * movedis, -2 * gridline.Direction.X * movedis, 0);
+                            ElementTransformUtils.MoveElement(doc, column.Id, newLocationrepair);
+                        }
+                        t.Commit();
                     }
-                    t.Commit();
+                    double distance1 = GetDistance.Distance(column, grid1);
+                    double movedis1 = (distance1 - Lamtron.Round(distance1, roundto)) / 12 / 25.4;
+
+                    XYZ newLocation1 = new XYZ(-gridline1.Direction.Y * movedis1, gridline1.Direction.X * movedis1, 0);
+
+                    using (Transaction t = new Transaction(doc, "move"))
+                    {
+                        t.Start("move");
+                        ElementTransformUtils.MoveElement(doc, column.Id, newLocation1);
+                        if (Math.Abs(GetDistance.Distance(column, grid1) % roundto) > 0.01 && Math.Abs(GetDistance.Distance(column, grid1) % roundto) < 4.99)
+                        {
+                            XYZ newLocationrepair1 = new XYZ(2 * gridline1.Direction.Y * movedis1, -2 * gridline1.Direction.X * movedis1, 0);
+                            ElementTransformUtils.MoveElement(doc, column.Id, newLocationrepair1);
+                        }
+                        t.Commit();
+                    }
                 }
-                double distance1 = GetDistance.Distance(column, grid1);
-                double movedis1 = (distance1 - Lamtron.Round(distance1,roundto)) / 12 / 25.4;
-
-                XYZ newLocation1 = new XYZ(-gridline1.Direction.Y * movedis1, gridline1.Direction.X * movedis1, 0);
-
-                using (Transaction t = new Transaction(doc, "move"))
+                if (emt is FamilyInstance && emt.Category.Id.IntegerValue == (int)BuiltInCategory.OST_StructuralFraming)
                 {
-                    t.Start("move");
-                    ElementTransformUtils.MoveElement(doc, column.Id, newLocation1);
-                    if (Math.Abs(GetDistance.Distance(column, grid1) % roundto) > 0.01 && Math.Abs(GetDistance.Distance(column, grid1) % roundto) < 4.99)
+                    FamilyInstance elem = emt as FamilyInstance;
+                    LocationCurve elemcurve = elem.Location as LocationCurve;
+                    Autodesk.Revit.DB.Line elemline = elemcurve.Curve as Autodesk.Revit.DB.Line;
+
+
+                    //Kiểm tra và đặt tên Grid, GridX song song với Location.Curve - Line, Grid Y vuông góc,...
+
+                    if (Geometry.GeomUtil.IsSameOrOppositeDirection(elemline.Direction, gridlineY.Direction))
                     {
-                        XYZ newLocationrepair1 = new XYZ(2 * gridline1.Direction.Y * movedis1, -2 * gridline1.Direction.X * movedis1, 0);
-                        ElementTransformUtils.MoveElement(doc, column.Id, newLocationrepair1);
+                        gridX = grid1;
+                        gridY = grid;
+                        gridlineX = gridX.Curve as Autodesk.Revit.DB.Line;
+                        gridlineY = gridY.Curve as Autodesk.Revit.DB.Line;
                     }
-                    t.Commit();
+                    double distance = GetDistance.GetMoveDistance(elemline, gridX, roundto);
+                    double movedis = Math.Abs(distance - Lamtron.Round(distance, roundto));
+                    // Move dầm phương song song
+                    if (movedis > precision)
+                    {
+                        XYZ movevector1 = new XYZ(-elemline.Direction.Y, elemline.Direction.X, 0).Normalize() * Geometry.GeomUtil.milimeter2Feet(movedis);
+
+                        using (Transaction transactionX = new Transaction(Singleton.Instance.RevitData.Document))
+                        {
+                            transactionX.Start("Beam Moving X");
+                            elem.Location.Move(movevector1);
+                            if (Math.Abs(GetDistance.GetMoveDistance(elemline, gridX, roundto) % roundto) > precision && Math.Abs(GetDistance.GetMoveDistance(elemline, gridX, roundto) % roundto) < roundto - precision)
+                            {
+                                elem.Location.Move(-2 * movevector1);
+                            }
+                            transactionX.Commit();
+                        }
+                    }
+                    distance = GetDistance.GetMoveDistance(elemline.GetEndPoint(0), gridY, roundto);
+                    movedis = Math.Abs(distance - Lamtron.Round(distance, roundto));
+                    // Move dầm phương vuông góc
+                    if (movedis >= precision)
+                    {
+                        XYZ movevector2 = new XYZ(elemline.Direction.X, elemline.Direction.Y, 0).Normalize() * Geometry.GeomUtil.milimeter2Feet(movedis);
+                        using (Transaction transactionY = new Transaction(Singleton.Instance.RevitData.Document))
+                        {
+                            transactionY.Start("Beam moving Y");
+                            elem.Location.Move(movevector2);
+                            if (Math.Abs(GetDistance.GetMoveDistance(elemline.GetEndPoint(0), gridY, roundto) % roundto) > precision && Math.Abs(GetDistance.GetMoveDistance(elemline.GetEndPoint(0), gridY, roundto) % roundto) < (roundto - precision))
+                            {
+                                elem.Location.Move(-2 * movevector2);
+                            }
+                            transactionY.Commit();
+                        }
+                    }
                 }
             }
         }
@@ -119,68 +177,21 @@ namespace ColumnRepair
         private void Button_Click_3(object sender, RoutedEventArgs e)
         {
             Hide();
-            const double precision = 0.00001;
-            int roundto = int.Parse(txtroundto.Text);
-            Autodesk.Revit.DB.Grid gridX = grid;
-            Autodesk.Revit.DB.Grid gridY = grid1;
-            Autodesk.Revit.DB.Line gridlineX = gridX.Curve as Autodesk.Revit.DB.Line;
-            Autodesk.Revit.DB.Line gridlineY = gridY.Curve as Autodesk.Revit.DB.Line;
-
-            foreach (Element emt in elems)
-            {
-                FamilyInstance elem = emt as FamilyInstance;
-                LocationCurve elemcurve = elem.Location as LocationCurve;
-                Autodesk.Revit.DB.Line elemline = elemcurve.Curve as Autodesk.Revit.DB.Line;
-
-
-                //Kiểm tra và đặt tên Grid, GridX song song với Location.Curve - Line, Grid Y vuông góc,...
-
-                if (Geometry.GeomUtil.IsSameOrOppositeDirection(elemline.Direction, gridlineY.Direction))
-                {
-                    gridX = uidoc.Document.GetElement(gridrefY) as Grid;
-                    gridY = uidoc.Document.GetElement(gridrefX) as Grid;
-                    gridlineX = gridX.Curve as Line;
-                    gridlineY = gridY.Curve as Line;
-                }
-                double movedis = GetMoveDistance(elemline, gridX, roundto);
-                // Move dầm phương song song
-                if (movedis > precision)
-                {
-                    XYZ movevector1 = new XYZ(-elemline.Direction.Y, elemline.Direction.X, 0).Normalize() * Geometry.GeomUtil.milimeter2Feet(movedis);
-
-                    using (Transaction transactionX = new Transaction(uidoc.Document))
-                    {
-                        transactionX.Start("Beam Moving X");
-                        elem.Location.Move(movevector1);
-                        if (Math.Abs(GetMoveDistance(elemline, gridX, roundto) % roundto) > precision && Math.Abs(GetMoveDistance(elemline, gridX, roundto) % roundto) < roundto - precision)
-                        {
-                            elem.Location.Move(-2 * movevector1);
-                        }
-                        transactionX.Commit();
-                    }
-                }
-                movedis = GetMoveDistance(elemline.GetEndPoint(0), gridY, roundto);
-                TaskDialog.Show("ss", movedis.ToString());
-                // Move dầm phương vuông góc
-                if (movedis >= precision)
-                {
-                    XYZ movevector2 = new XYZ(elemline.Direction.X, elemline.Direction.Y, 0).Normalize() * Geometry.GeomUtil.milimeter2Feet(movedis);
-                    using (Transaction transactionY = new Transaction(uidoc.Document))
-                    {
-                        transactionY.Start("Beam moving Y");
-                        elem.Location.Move(movevector2);
-                        if (Math.Abs(GetMoveDistance(elemline.GetEndPoint(0), gridY, roundto) % roundto) > precision && Math.Abs(GetMoveDistance(elemline.GetEndPoint(0), gridY, roundto) % roundto) < (roundto - precision))
-                        {
-                            elem.Location.Move(-2 * movevector2);
-                        }
-                        transactionY.Commit();
-                    }
-                }
-            }               
+            List<Reference> rfs1 = Singleton.Instance.RevitData.Selection.PickObjects(Autodesk.Revit.UI.Selection.ObjectType.Element, new BeamSelectionFilter())
+                as List<Reference>;
+            elems = rfs1.Select(x => Singleton.Instance.RevitData.Document.GetElement(x) as Autodesk.Revit.DB.Element).ToList();
+            elems.ForEach(x => Singleton.Instance.WPFData.Elements.Add(x));
+            ShowDialog();
         }
+
         private void Button_Click_4(object sender, RoutedEventArgs e)
         {
-
+            Hide();
+            List<Reference> rfs1 = Singleton.Instance.RevitData.Selection.PickObjects(Autodesk.Revit.UI.Selection.ObjectType.Element, new StructuralWallFilter())
+                as List<Reference>;
+            elems = rfs1.Select(x => Singleton.Instance.RevitData.Document.GetElement(x) as Autodesk.Revit.DB.Element).ToList();
+            elems.ForEach(x => Singleton.Instance.WPFData.Elements.Add(x));
+            ShowDialog();
         }
     }
 }
