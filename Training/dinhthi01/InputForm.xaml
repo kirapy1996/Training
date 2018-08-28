@@ -18,7 +18,8 @@
             <TextBox Height="20"
                      Width="75"
                      HorizontalAlignment="Right"
-                     Margin="0,0,30,0" TextChanged="TextBox_TextChanged">
+                     Margin="0,0,30,0" TextChanged="TextBox_TextChanged"
+                     x:Name="txtround">
                 
             </TextBox>
         </Grid>
@@ -32,13 +33,13 @@
                 <Button Height="20" Width="50"
                 HorizontalAlignment="Left"
                 Margin="25,5,0,0"
-                Content="Ok" Click="Button_Click">
+                Content="Ok" Click="OK">
 
                 </Button>
                 <Button Height="20" Width="50"
                 HorizontalAlignment="Right"
                 Margin="0,5,25,0"
-                Content="Cancel" Click="Button_Click_1">
+                Content="Cancel" Click="Cancel">
                 </Button>
             </Grid>
         </StackPanel>

@@ -27,7 +27,7 @@ namespace dinhthi01
             Reference gridrefY = sel.PickObject(ObjectType.Element, new GridSelectionFilter());
             Grid gridY = uidoc.Document.GetElement(gridrefY) as Grid;
             
-            List<Element> elemlist = sel.PickElementsByRectangle(new BeamSelectionFilter()) as List<Element>;
+            List<Element> elemlist = sel.PickElementsByRectangle(new StructuralWallFilter()) as List<Element>;
             foreach (Element elem in elemlist)
             {
                 
@@ -102,7 +102,7 @@ namespace dinhthi01
         {
             Line gridline = grid.Curve as Line;
             XYZ zeropoint = new XYZ(point.X, point.Y, 0);
-            double distance = 12 * 25.4 * gridline.Distance(zeropoint);
+            double distance = Geometry.GeomUtil.feet2Milimeter(gridline.Distance(zeropoint));
             double movedis = Math.Abs(distance - Round(distance, roundto));
             return movedis;
         }
@@ -146,7 +146,7 @@ namespace dinhthi01
             return false;
         }
     }
-    public class StruturalColumnFilter : ISelectionFilter
+    public class StructuralColumnFilter : ISelectionFilter
     {
         public bool AllowElement(Element elem)
         {
