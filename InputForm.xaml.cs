@@ -94,9 +94,7 @@ namespace dinhthi01
             {
                 case th1:
                     {
-                        List<Reference> elemreflist = Singleton.Instance.RevitData.Selection.PickObjects(ObjectType.Element ,new BeamSelectionFilter(),"Select Beams") as List<Reference>;
-                        List<Element> elemlist = elemreflist.Select(x => Singleton.Instance.RevitData.Document.GetElement(x) as Autodesk.Revit.DB.Element).ToList();
-                        elemlist.ForEach(x => Singleton.Instance.WPFData.Elements.Add(x));
+                        List<Element> elemlist = Singleton.Instance.RevitData.Selection.PickElementsByRectangle(new BeamSelectionFilter()) as List<Element>;
                         using (Transaction transactionbeam = new Transaction(doc))
                         {
                             transactionbeam.Start("Beam Moving");
@@ -147,9 +145,7 @@ namespace dinhthi01
                     }
                 case th2:
                     {
-                        List<Reference> elemreflist = Singleton.Instance.RevitData.Selection.PickObjects(ObjectType.Element, new StructuralColumnFilter(), "Select Columns") as List<Reference>;
-                        List<Element> elemlist = elemreflist.Select(x => Singleton.Instance.RevitData.Document.GetElement(x) as Autodesk.Revit.DB.Element).ToList();
-                        elemlist.ForEach(x => Singleton.Instance.WPFData.Elements.Add(x));
+                        List<Element> elemlist = Singleton.Instance.RevitData.Selection.PickElementsByRectangle(new StructuralColumnFilter()) as List<Element>;
                         using (Transaction transactioncolumn = new Transaction(doc))
                         {
                             transactioncolumn.Start("Column Moving ");
@@ -180,9 +176,9 @@ namespace dinhthi01
                                     
                                     XYZ movevector2 = new XYZ(-gridlineY.Direction.Y, gridlineY.Direction.X, 0).Normalize() * Geometry.GeomUtil.milimeter2Feet(movedis);
                                   
-                                    //TaskDialog.Show("asas", Command.GetMoveDistance(elemcurve.Point, gridY, roundto).ToString());
+                                    TaskDialog.Show("asas", Command.GetMoveDistance(elemcurve.Point, gridY, roundto).ToString());
                                     elem.Location.Move(movevector2);
-                                    //TaskDialog.Show("asas", Command.GetMoveDistance(elemcurve.Point, gridY, roundto).ToString());
+                                    TaskDialog.Show("asas", Command.GetMoveDistance(elemcurve.Point, gridY, roundto).ToString());
                                     if (Math.Abs(Command.GetMoveDistance(elemcurve.Point, gridY, roundto) % roundto) > precision && Math.Abs(Command.GetMoveDistance(elemcurve.Point, gridY, roundto) % roundto) < (roundto - precision))
                                     {
                                         elem.Location.Move(-2 * movevector2);
@@ -198,9 +194,7 @@ namespace dinhthi01
                 case th3:
 
                     {
-                        List<Reference> elemreflist = Singleton.Instance.RevitData.Selection.PickObjects(ObjectType.Element, new StructuralWallFilter(), "Select Walls") as List<Reference>;
-                        List<Element> elemlist = elemreflist.Select(x => Singleton.Instance.RevitData.Document.GetElement(x) as Autodesk.Revit.DB.Element).ToList();
-                        elemlist.ForEach(x => Singleton.Instance.WPFData.Elements.Add(x));
+                        List<Element> elemlist = Singleton.Instance.RevitData.Selection.PickElementsByRectangle(new StructuralWallFilter()) as List<Element>;
                         using (Transaction transactionwall = new Transaction(doc))
                         {
                             transactionwall.Start("Walls Moving");
@@ -247,6 +241,7 @@ namespace dinhthi01
 
                         break;
                     }
+
             }
 
         }
